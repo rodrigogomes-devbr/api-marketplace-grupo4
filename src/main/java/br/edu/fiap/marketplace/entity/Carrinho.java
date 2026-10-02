@@ -1,5 +1,6 @@
 package br.edu.fiap.marketplace.entity;
 
+import br.edu.fiap.marketplace.exception.RegraNegocioException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,22 +58,35 @@ public class Carrinho {
 
     /** TODO aceitar somente quantidade positiva enquanto o carrinho estiver aberto. */
     public void alterarQuantidade(int novaQuantidade) {
-        throw new UnsupportedOperationException("TODO implementar alterarQuantidade");
+        if (status != StatusCarrinho.ABERTO) {
+            throw new RegraNegocioException("Carrinho não está aberto para alteração");
+        }
+        if (novaQuantidade <= 0) {
+            throw new RegraNegocioException("Quantidade deve ser positiva");
+        }
+        this.quantidade = novaQuantidade;
     }
 
     /** TODO calcular preço do produto multiplicado pela quantidade. */
     public BigDecimal calcularTotal() {
-        throw new UnsupportedOperationException("TODO implementar calcularTotal");
+        return produto.getPreco().multiply(BigDecimal.valueOf(quantidade));
+
     }
 
     /** TODO impedir finalizar carrinho cancelado ou já finalizado. */
     public void finalizar() {
-        throw new UnsupportedOperationException("TODO implementar finalizar");
+        if (status != StatusCarrinho.ABERTO) {
+            throw new RegraNegocioException("Apenas carrinho aberto pode ser finalizado");
+        }
+        this.status = StatusCarrinho.FINALIZADO;
     }
 
     /** TODO impedir alterações posteriores ao cancelamento. */
     public void cancelar() {
-        throw new UnsupportedOperationException("TODO implementar cancelar");
+        if (status != StatusCarrinho.ABERTO) {
+            throw new RegraNegocioException("Apenas carrinho aberto pode ser cancelado");
+        }
+        this.status = StatusCarrinho.CANCELADO;
     }
 
     public Long getId() { return id; }

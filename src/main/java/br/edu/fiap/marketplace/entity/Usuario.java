@@ -1,5 +1,6 @@
 package br.edu.fiap.marketplace.entity;
 
+import br.edu.fiap.marketplace.exception.RegraNegocioException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,17 +46,21 @@ public class Usuario {
 
     /** TODO implementar a troca do hash armazenado. */
     public void atualizarSenhaHash(String novoHash) {
-        throw new UnsupportedOperationException("TODO implementar atualizarSenhaHash");
+        if(novoHash == null || novoHash.isBlank()) {
+            throw new RegraNegocioException("Hash de senha inválido");
+        }
+        this.senha = novoHash;
+
     }
 
     /** TODO permitir novamente o uso da conta. */
     public void ativar() {
-        throw new UnsupportedOperationException("TODO implementar ativar");
+        this.ativo = true;
     }
 
     /** TODO impedir login e novas compras. */
     public void desativar() {
-        throw new UnsupportedOperationException("TODO implementar desativar");
+        this.ativo = false;
     }
 
     public Long getId() { return id; }

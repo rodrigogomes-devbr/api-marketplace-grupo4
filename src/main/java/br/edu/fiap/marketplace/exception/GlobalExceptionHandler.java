@@ -58,6 +58,27 @@ public class GlobalExceptionHandler {
                 Map.of());
     }
 
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ResponseEntity<ApiErrorResponse> tratarRecursoNaoEncontrado(
+            RecursoNaoEncontradoException erro,
+            HttpServletRequest request) {
+        return resposta(HttpStatus.NOT_FOUND, erro.getMessage(), request, Map.of());
+    }
+
+    @ExceptionHandler({ConflitoNegocioException.class, RegraNegocioException.class})
+    public ResponseEntity<ApiErrorResponse> tratarConflito(
+            RuntimeException erro,
+            HttpServletRequest request) {
+        return resposta(HttpStatus.CONFLICT, erro.getMessage(), request, Map.of());
+    }
+
+    @ExceptionHandler(CredenciaisInvalidasException.class)
+    public ResponseEntity<ApiErrorResponse> tratarCredenciaisInvalidas(
+            CredenciaisInvalidasException erro,
+            HttpServletRequest request) {
+        return resposta(HttpStatus.UNAUTHORIZED, erro.getMessage(), request, Map.of());
+    }
+
     private ResponseEntity<ApiErrorResponse> resposta(
             HttpStatus status,
             String mensagem,

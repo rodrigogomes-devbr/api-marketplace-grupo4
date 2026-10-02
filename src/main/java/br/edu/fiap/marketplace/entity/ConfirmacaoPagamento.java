@@ -1,5 +1,6 @@
 package br.edu.fiap.marketplace.entity;
 
+import br.edu.fiap.marketplace.exception.RegraNegocioException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,17 +63,28 @@ public class ConfirmacaoPagamento {
 
     /** TODO aprovar somente pagamento pendente e finalizar o carrinho. */
     public void aprovar() {
-        throw new UnsupportedOperationException("TODO implementar aprovar");
+        if(status != StatusPagamento.PENDENTE ) {
+            throw new RegraNegocioException("Pagamento já foi processado anteriormente");
+        }
+        this.status = StatusPagamento.PAGO;
+        this.confirmadoEm = Instant.now();
+        this.carrinho.finalizar();
     }
 
     /** TODO recusar somente pagamento pendente. */
     public void recusar() {
-        throw new UnsupportedOperationException("TODO implementar recusar");
-    }
+       if (status != StatusPagamento.PENDENTE) {
+           throw new RegraNegocioException("O pagamento já foi processado anteriormente");
+       }
+       this.status = StatusPagamento.RECUSADO;
+       this.confirmadoEm = Instant.now();
+
+       }
+
 
     /** TODO devolver verdadeiro apenas para status PAGO. */
     public boolean estaPago() {
-        throw new UnsupportedOperationException("TODO implementar estaPago");
+        return status == StatusPagamento.PAGO;
     }
 
     public Long getId() { return id; }
